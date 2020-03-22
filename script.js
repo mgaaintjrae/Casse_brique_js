@@ -34,10 +34,11 @@ for (let c = 0; c < brickColumnCount; c++) {
         };
     }
 }
-
+// -------Contrôle clavier
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-
+// -------Contrôle souris
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 // 4.Contrôles clavier
 function keyDownHandler(e) {
@@ -55,6 +56,15 @@ function keyUpHandler(e) {
         leftPressed = false;
     }
 }
+
+// 9.Contrôles souris
+function mouseMoveHandler(e) {
+    let relativeX = e.clientX - canvas.offsetLeft;
+    if (relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth / 2;
+    }
+}
+
 // Carré rouge
 // ctx.beginPath();
 // ctx.rect(20, 40, 50, 50);
@@ -135,9 +145,9 @@ function drawBricks() {
 }
 
 function drawScore() {
-  ctx.font = "16px Arial";
-  ctx.fillStyle = "#0095DD";
-  ctx.fillText("Score: "+score, 8, 20);
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Score: " + score, 8, 20);
 }
 
 function draw() {
@@ -178,6 +188,4 @@ function draw() {
 let game = setInterval(draw, 10);
 
 
-
-// 9.Contrôles souris
 // 10.Finir
