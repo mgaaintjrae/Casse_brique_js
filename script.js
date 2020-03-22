@@ -21,6 +21,7 @@ let brickHeight = 20;
 let brickPadding = 10;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 30;
+let score = 0;
 
 let bricks = [];
 for (let c = 0; c < brickColumnCount; c++) {
@@ -84,6 +85,12 @@ function collisionDetection() {
                 if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = - dy;
                     b.status = 0;
+                    score++;
+                    // 8.Afficher le score et gagner
+                    if (score == brickRowCount * brickColumnCount) {
+                        alert("YOU WIN, CONGRATS !");
+                        document.location.reload();
+                    }
                 }
             }
         }
@@ -112,17 +119,25 @@ function drawPaddle() {
 function drawBricks() {
     for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-            let brickX = (r * (brickWidth + brickPadding)) + brickOffsetLeft;
-            let brickY = (c * (brickHeight + brickPadding)) + brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = "#0095DD";
-            ctx.fill();
-            ctx.closePath;
+            if (bricks[c][r].status == 1) {
+                let brickX = (r * (brickWidth + brickPadding)) + brickOffsetLeft;
+                let brickY = (c * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath;
+            }
         }
     }
+}
+
+function drawScore() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: "+score, 8, 20);
 }
 
 function draw() {
@@ -130,6 +145,7 @@ function draw() {
     drawBricks();
     drawBall();
     drawPaddle();
+    drawScore();
     collisionDetection();
 
     // 3.Rebondir sur les murs
@@ -162,6 +178,6 @@ function draw() {
 let game = setInterval(draw, 10);
 
 
-// 8.Afficher le score et gagner
+
 // 9.Contrôles souris
 // 10.Finir
