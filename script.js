@@ -13,6 +13,25 @@ let paddleWidth = 75;
 let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false;
 let leftPressed = false;
+// 6.Construire le mur de briques
+let brickRowCount = 5;
+let brickColumnCount = 3;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+
+let bricks = [];
+for (let c = 0; c < brickColumnCount; c++) {
+    bricks[c] = [];
+    for (let r = 0; r < brickRowCount; r++) {
+        bricks[c][r] = {
+            x: 0,
+            y: 0
+        };
+    }
+}
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -20,19 +39,19 @@ document.addEventListener("keyup", keyUpHandler, false);
 
 // 4.Contrôles clavier
 function keyDownHandler(e) {
-  if (e.keyCode == 39) {
-      rightPressed = true;
-  } else if (e.keyCode == 37) {
-      leftPressed = true;
-  }
+    if (e.keyCode == 39) {
+        rightPressed = true;
+    } else if (e.keyCode == 37) {
+        leftPressed = true;
+    }
 }
 
 function keyUpHandler(e) {
-  if (e.keyCode == 39) {
-      rightPressed = false;
-  } else if (e.keyCode == 37) {
-      leftPressed = false;
-  }
+    if (e.keyCode == 39) {
+        rightPressed = false;
+    } else if (e.keyCode == 37) {
+        leftPressed = false;
+    }
 }
 // Carré rouge
 // ctx.beginPath();
@@ -74,8 +93,26 @@ function drawPaddle() {
     ctx.closePath();
 }
 
+// ----- construction du mur de briques
+function drawBricks() {
+  for(let c=0; c<brickColumnCount; c++) {
+    for(let r=0; r<brickRowCount; r++) {
+      let brickX = (r*(brickWidth+brickPadding))+brickOffsetLeft;
+      let brickY = (c*(brickHeight+brickPadding))+brickOffsetTop;
+      bricks[c][r].x = brickX;
+      bricks[c][r].y = brickY;
+      ctx.beginPath();
+      ctx.rect(brickX, brickY, brickWidth, brickHeight);
+      ctx.fillStyle = "#0095DD";
+      ctx.fill();
+      ctx.closePath;
+    }
+  }
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
     drawBall();
     drawPaddle();
 
@@ -83,18 +120,18 @@ function draw() {
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = - dx;
     }
-    if(y + dy < ballRadius) {
-      dy = -dy;
+    if (y + dy < ballRadius) {
+        dy = - dy;
+    } else if (y + dy > canvas.height - ballRadius) {
+        if (x > paddleX && x < paddleX + paddleWidth) {
+            dy = - dy;
+
+        } else { // 5.Jeu terminé
+            clearInterval(game);
+            alert("GAME OVER");
+            document.location.reload();
+        }
     }
-    else if(y +dy > canvas.height-ballRadius) {
-      if(x > paddleX && x < paddleX + paddleWidth) {
-        dy = -dy;
-      } else {
-        clearInterval(game);
-        alert("GAME OVER");
-        document.location.reload();
-      }
-    }    
 
     if (rightPressed && paddleX < canvas.width - paddleWidth) {
         paddleX += 7;
@@ -109,10 +146,6 @@ function draw() {
 let game = setInterval(draw, 10);
 
 
-
-
-// 5.Jeu terminé
-// 6.Construire le mur de briques
 // 7.Détection des collisions
 // 8.Afficher le score et gagner
 // 9.Contrôles souris
